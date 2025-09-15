@@ -19,6 +19,9 @@ export default function RootLayout() {
           <Stack.Screen name="(drawer)" options={{ title: 'My Drawer', headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="sign-up" options={{ headerShown: false }} />
+          <Stack.Screen name="greet" options={{ headerShown: false }} />
+          <Stack.Screen name="test1" options={{ title: 'Test 1', headerShown: true }} />
+          <Stack.Screen name="component-showcase" options={{ title: 'Component Showcase', headerShown: true }} />
         </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
