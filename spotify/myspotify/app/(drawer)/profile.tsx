@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
-
+import { Vibration } from 'react-native';
 const initialUser = {
   name: 'Shrek_1',
   email: 'shrek@gmail.com',
@@ -51,6 +51,7 @@ const ProfileScreen = () => {
     if (!usernameRegex.test(name)) {
       setNameError('Name must be 3-20 alphanumeric or underscores');
       nameInputRef.current?.shake(800);
+      Vibration.vibrate(100);
     } else {
       setNameError('');
     }
@@ -61,6 +62,7 @@ const ProfileScreen = () => {
     if (!emailRegex.test(email)) {
       setEmailError('Invalid email address');
       emailInputRef.current?.shake(800);
+      Vibration.vibrate(100);
     } else {
       setEmailError('');
     }
@@ -78,6 +80,7 @@ const ProfileScreen = () => {
 
   const handleEditToggle = () => {
     if (nameError || emailError || genreError) {
+      Vibration.vibrate(200);
       if (nameError) nameInputRef.current?.shake(800);
       if (emailError) emailInputRef.current?.shake(800);
       if (genreError) genreInputRef.current?.shake(800);
