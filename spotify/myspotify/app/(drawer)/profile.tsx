@@ -1,22 +1,135 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { TextInput } from 'react-native-gesture-handler';
+import * as Animatable from 'react-native-animatable';
 
-const user = {
-  name: 'Shrek',
-  username: '@shrek',
+const initialUser = {
+  name: 'Shrek_1',
+  email: 'shrek@gmail.com',
+  genre: '',
   followers: 1234,
   following: 56,
-  image: require('../../images/shrek.jpg'),
+  image: require('../../images/shrek.jpg')
 };
 
+const usernameRegex = /^[A-Za-z0-9_]{3,20}$/;
+const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const genreRegex = /^[A-Za-z ]{2,20}$/;
+
+type ProfilePreviewProps = {
+  genre: string;
+};
+
+const ProfilePreview = React.memo(({ genre }: ProfilePreviewProps) => {
+  let genreImage = require('../../images/shrek.jpg');
+  if (genre && genre.toLowerCase().includes('rock')) genreImage = require('../../images/Rock.jpg');
+  if (genre && genre.toLowerCase().includes('pop')) genreImage = require('../../images/Pop.jpg');
+  if (genre && genre.toLowerCase().includes('jazz')) genreImage = require('../../images/Jazz.jpg');
+  return (
+    <Animatable.Image
+      source={genreImage}
+      style={styles.avatar}
+      animation={genre ? 'fadeIn' : undefined}
+      duration={600}
+    />
+  );
+});
+
 const ProfileScreen = () => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [user, setUser] = React.useState(initialUser);
+  const [nameError, setNameError] = React.useState('');
+  const [emailError, setEmailError] = React.useState('');
+  const [genreError, setGenreError] = React.useState('');
+  const nameInputRef = React.useRef<Animatable.View & { shake: (duration?: number) => void }>(null);
+  const emailInputRef = React.useRef<Animatable.View & { shake: (duration?: number) => void }>(null);
+  const genreInputRef = React.useRef<Animatable.View & { shake: (duration?: number) => void }>(null);
+
+  const handleNameChange = (name: string) => {
+    setUser({ ...user, name });
+    if (!usernameRegex.test(name)) {
+      setNameError('Name must be 3-20 alphanumeric or underscores');
+      nameInputRef.current?.shake(800);
+    } else {
+      setNameError('');
+    }
+  };
+
+  const handleEmailChange = (email: string) => {
+    setUser({ ...user, email });
+    if (!emailRegex.test(email)) {
+      setEmailError('Invalid email address');
+      emailInputRef.current?.shake(800);
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handleGenreChange = (genre: string) => {
+    setUser({ ...user, genre });
+    if (!genreRegex.test(genre)) {
+      setGenreError('Genre must be 2-20 letters or spaces');
+      genreInputRef.current?.shake(800);
+    } else {
+      setGenreError('');
+    }
+  };
+
+  const handleEditToggle = () => {
+    if (nameError || emailError || genreError) {
+      if (nameError) nameInputRef.current?.shake(800);
+      if (emailError) emailInputRef.current?.shake(800);
+      if (genreError) genreInputRef.current?.shake(800);
+      return;
+    }
+    setIsEditing(!isEditing);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerSection}>
-        <Image source={user.image} style={styles.avatar} />
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.username}>{user.username}</Text>
+        <ProfilePreview genre={user.genre} />
+        {isEditing ? (
+          <>
+            <Animatable.View ref={nameInputRef}>
+              <TextInput
+                style={[styles.name, { backgroundColor: '#222', padding: 6, borderRadius: 8 }]}
+                value={user.name}
+                onChangeText={handleNameChange}
+                editable={true}
+              />
+            </Animatable.View>
+            {nameError ? <Text style={{ color: 'red', marginBottom: 4 }}>{nameError}</Text> : null}
+            <Animatable.View ref={emailInputRef}>
+              <TextInput
+                style={[styles.username, { backgroundColor: '#222', padding: 6, borderRadius: 8 }]}
+                value={user.email}
+                onChangeText={handleEmailChange}
+                editable={true}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </Animatable.View>
+            {emailError ? <Text style={{ color: 'red', marginBottom: 4 }}>{emailError}</Text> : null}
+            <Animatable.View ref={genreInputRef}>
+              <TextInput
+                style={[styles.username, { backgroundColor: '#222', padding: 6, borderRadius: 8 }]}
+                value={user.genre}
+                onChangeText={handleGenreChange}
+                editable={true}
+                placeholder="Genre (e.g. Rock, Pop, Jazz)"
+              />
+            </Animatable.View>
+            {genreError ? <Text style={{ color: 'red', marginBottom: 4 }}>{genreError}</Text> : null}
+          </>
+        ) : (
+          <>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.username}>{user.email}</Text>
+            <Text style={styles.username}>{user.genre}</Text>
+          </>
+        )}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>{user.followers}</Text>
@@ -27,14 +140,13 @@ const ProfileScreen = () => {
             <Text style={styles.statLabel}>Following</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
           <Ionicons name="pencil" size={18} color="#1DB954" />
-          <Text style={styles.editButtonText}>Edit Profile</Text>
+          <Text style={styles.editButtonText}>{isEditing ? 'Save' : 'Edit Profile'}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Your Playlists</Text>
-        {/* You can map over user's playlists here */}
         <View style={styles.playlistRow}>
           <Ionicons name="musical-notes-outline" size={22} color="#1DB954" style={{ marginRight: 10 }} />
           <Text style={styles.playlistName}>Chill Hits</Text>
