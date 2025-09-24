@@ -1,53 +1,52 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+// src/theme.ts
+import { StyleSheet } from 'react-native';
 
-import { Platform } from 'react-native';
+type Mode = 'light' | 'dark' | 'custom';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+export const getTheme = (mode: Mode, accent: string) => {
+  const isDark = mode === 'dark';
+  const isCustom = mode === 'custom';
 
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+  const background = isCustom ? accent : isDark ? '#121212' : '#fff';
+  const text = isDark ? '#fff' : '#121212';
+  const card = isDark ? '#181818' : '#f5f5f5';
+  const description = isDark ? '#b3b3b3' : '#555';
+
+  return {
+    colors: {
+      background,
+      text,
+      accent,
+      card,             // <── added
+      description,      // <── added
+      lightButtonBg: '#eee',
+      darkButtonBg: '#222',
+    },
+    styles: StyleSheet.create({
+      container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      title: {
+        fontSize: 24,
+        marginBottom: 20,
+        color: text,
+      },
+      button: {
+        margin: 10,
+        padding: 10,
+        borderRadius: 8,
+      },
+      lightButtonText: {
+        color: '#121212',
+      },
+      darkButtonText: {
+        color: '#fff',
+      },
+      customButtonText: {
+        color: '#fff',
+      },
+    }),
+  };
 };
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});

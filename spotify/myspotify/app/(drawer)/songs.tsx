@@ -1,87 +1,78 @@
-import { useRoute } from '@react-navigation/native';
-import * as React from 'react';
-import { FlatList, StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { useReducer } from 'react';
-import Animated, { Layout, FadeIn, FadeOut } from 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-type Song = { id: string; title: string };
-type Playlist = { id: string; title: string; songs: Song[] };
+import { Playlist, Song } from "@/entities/data";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
+import * as React from "react";
+import { useReducer } from "react";
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { useSelector } from "react-redux";
+import { RootState as R } from "../../constants/store";
+import { getTheme } from "../../constants/theme";
+
+
 
 const savePlaylists = async (playlists: Playlist[]) => {
   try {
-    await AsyncStorage.setItem('playlists', JSON.stringify(playlists));
+    await AsyncStorage.setItem("playlists", JSON.stringify(playlists));
   } catch (e) {
     // handle error
   }
 };
-const playlists: Playlist[] = [
-  {
-    id: '1',
-    title: 'Chill Hits',
-    songs: [
-      { id: 's1', title: 'Song A' },
-      { id: 's2', title: 'Song B' },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Top 50 Global',
-    songs: [
-      { id: 's3', title: 'Song C' },
-      { id: 's4', title: 'Song D' },
-    ],
-  },
-  {
-    id: '3',
-    title: 'Mood Booster',
-    songs: [
-      { id: 's5', title: 'Song E' },
-    ],
-  },
-];
-
+async function getSongsByPlaylistId(playlistId: string): Promise<Song[]> {
+  const user = await AsyncStorage.getItem("user");
+  return user
+    ? JSON.parse(user).playlists.find((p: Playlist) => p.id === playlistId)
+        ?.songs || []
+    : [];
+}
 type State = Playlist[];
 type Action =
-  | { type: 'ADD_SONG'; playlistId: string; song: Song }
-  | { type: 'REMOVE_SONG'; playlistId: string; songId: string }
-  | { type: 'UNDO'; history: State[] }
-  | { type: 'REDO'; future: State[] }
-  | { type: 'INIT'; playlists: Playlist[] };
+  | { type: "ADD_SONG"; playlistId: string; song: Song }
+  | { type: "REMOVE_SONG"; playlistId: string; songId: string }
+  | { type: "UNDO"; history: State[] }
+  | { type: "REDO"; future: State[] }
+  | { type: "INIT"; playlists: Playlist[] };
 
 function reducer(state: State, action: Action): State {
   let newState: State = state;
   switch (action.type) {
-    case 'ADD_SONG': {
+    case "ADD_SONG": {
       const { playlistId, song } = action;
-      newState = state.map(p =>
-        p.id === playlistId
-          ? { ...p, songs: [...p.songs, song] }
-          : p
+      newState = state.map((p) =>
+        p.id === playlistId ? { ...p, songs: [...p.songs, song] } : p
       );
       break;
     }
-    case 'REMOVE_SONG': {
+    case "REMOVE_SONG": {
       const { playlistId, songId } = action;
-      newState = state.map(p =>
+      newState = state.map((p) =>
         p.id === playlistId
-          ? { ...p, songs: p.songs.filter(s => s.id !== songId) }
+          ? { ...p, songs: p.songs.filter((s) => s.id !== songId) }
           : p
       );
       break;
     }
-    case 'UNDO': {
+    case "UNDO": {
       if (action.history && action.history.length > 0) {
         newState = action.history[action.history.length - 1];
       }
       break;
     }
-    case 'REDO': {
+    case "REDO": {
       if (action.future && action.future.length > 0) {
         newState = action.future[0];
       }
       break;
     }
-    case 'INIT': {
+    case "INIT": {
       newState = action.playlists;
       break;
     }
@@ -89,31 +80,49 @@ function reducer(state: State, action: Action): State {
       break;
   }
   // Always persist playlists after any change except INIT
-  if (action.type !== 'INIT') {
+  if (action.type !== "INIT") {
     savePlaylists(newState);
   }
   return newState;
 }
 
 const SongsScreen: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, playlists);
+  const mode = useSelector((state: R) => state.theme.mode);
+  const accentColor = useSelector((state: R) => state.theme.accentColor);
+  const [state, dispatch] = useReducer(reducer, []);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [newSongTitle, setNewSongTitle] = React.useState('');
+  const [newSongTitle, setNewSongTitle] = React.useState("");
   const [history, setHistory] = React.useState<State[]>([]);
   const [future, setFuture] = React.useState<State[]>([]);
   const route = useRoute();
   const { playlistId } = route.params as { playlistId: string };
+  const { userId } = route.params as { userId: string };
   const playlist = state.find((p: Playlist) => p.id === playlistId);
-  
+  const { colors } = getTheme(mode as any, accentColor);
   React.useEffect(() => {
-  const loadPlaylists = async () => {
-    const data = await AsyncStorage.getItem('playlists');
-    if (data) {
-      dispatch({ type: 'INIT', playlists: JSON.parse(data) });
-    }
-  };
-  loadPlaylists();
-}, []);
+    const loadPlaylists = async () => {
+      const userStr = await AsyncStorage.getItem("user");
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        // Find the playlist by playlistId
+        const playlists = user.playlists || [];
+        dispatch({ type: "INIT", playlists });
+      }
+    };
+    loadPlaylists();
+  }, [playlistId]);
+  React.useEffect(() => {
+    const loadPlaylists = async () => {
+      const userStr = await AsyncStorage.getItem("user");
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        // Find the playlist by playlistId
+        const playlists = user.playlists || [];
+        dispatch({ type: "INIT", playlists });
+      }
+    };
+    loadPlaylists();
+  }, [playlistId]);
   if (!playlist) {
     return (
       <View style={styles.container}>
@@ -123,30 +132,40 @@ const SongsScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{playlist.title} Songs</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.header, { color: colors.text }]}>
+        {playlist.title} Songs
+      </Text>
       <FlatList
         data={playlist.songs}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }: { item: Song }) => (
-          <Animated.View 
-          layout={Layout.springify()}
-          entering={FadeIn}
-          exiting={FadeOut}
-          style={styles.songRow}>
-            <Text style={styles.songTitle}>{item.title}</Text>
+          <Animated.View
+            layout={Layout.springify()}
+            entering={FadeIn}
+            exiting={FadeOut}
+            style={[
+              styles.songRow,
+              { backgroundColor: colors.card }, // card background
+            ]}
+          >
+            <Text style={[styles.songTitle, { color: colors.text }]}>{item.title}</Text>
             <TouchableOpacity
               style={styles.removeBtn}
               onPress={() => {
                 setHistory([...history, state]);
-                dispatch({ type: 'REMOVE_SONG', playlistId, songId: item.id });
+                dispatch({ type: "REMOVE_SONG", playlistId, songId: item.id });
               }}
             >
-              <Text style={{ color: '#fff' }}>Remove</Text>
+              <Text style={{ color: "#fff" }}>Remove</Text>
             </TouchableOpacity>
           </Animated.View>
         )}
-        ListEmptyComponent={<Text style={{ color: '#888', textAlign: 'center', marginTop: 32 }}>No songs in this playlist.</Text>}
+        ListEmptyComponent={
+          <Text style={{ color: "#888", textAlign: "center", marginTop: 32 }}>
+            No songs in this playlist.
+          </Text>
+        }
       />
 
       <View style={styles.buttonRow}>
@@ -161,7 +180,7 @@ const SongsScreen: React.FC = () => {
           onPress={() => {
             if (history.length > 0) {
               setFuture([state, ...future]);
-              dispatch({ type: 'UNDO', history });
+              dispatch({ type: "UNDO", history });
               setHistory(history.slice(0, -1));
             }
           }}
@@ -173,7 +192,7 @@ const SongsScreen: React.FC = () => {
           onPress={() => {
             if (future.length > 0) {
               setHistory([...history, state]);
-              dispatch({ type: 'REDO', future });
+              dispatch({ type: "REDO", future });
               setFuture(future.slice(1));
             }
           }}
@@ -189,27 +208,29 @@ const SongsScreen: React.FC = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Song</Text>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.accent }]}>Add Song</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.background, color: colors.text }]}
               placeholder="Song Title"
               placeholderTextColor="#888"
               value={newSongTitle}
               onChangeText={setNewSongTitle}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <TouchableOpacity
                 style={styles.spotifyBtn}
                 onPress={() => {
                   if (newSongTitle.trim()) {
                     setHistory([...history, state]);
                     dispatch({
-                      type: 'ADD_SONG',
+                      type: "ADD_SONG",
                       playlistId,
                       song: { id: Date.now().toString(), title: newSongTitle },
                     });
-                    setNewSongTitle('');
+                    setNewSongTitle("");
                     setModalVisible(false);
                   }
                 }}
@@ -228,80 +249,79 @@ const SongsScreen: React.FC = () => {
       </Modal>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
     padding: 16,
   },
   header: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   songRow: {
-    backgroundColor: '#181818',
+    backgroundColor: "#181818",
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   songTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     flex: 1,
   },
   removeBtn: {
-    backgroundColor: '#b71c1c',
+    backgroundColor: "#b71c1c",
     borderRadius: 6,
     padding: 8,
     marginLeft: 8,
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 24,
   },
   spotifyBtn: {
-    backgroundColor: '#1DB954',
+    backgroundColor: "#1DB954",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 18,
     marginHorizontal: 4,
   },
   btnText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#181818',
+    backgroundColor: "#181818",
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: "80%",
   },
   modalTitle: {
-    color: '#1DB954',
+    color: "#1DB954",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
-    backgroundColor: '#222',
-    color: '#fff',
+    backgroundColor: "#222",
+    color: "#fff",
     borderRadius: 8,
     padding: 10,
     marginBottom: 18,

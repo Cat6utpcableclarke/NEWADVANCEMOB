@@ -1,18 +1,13 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
-import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Stack } from 'expo-router';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from '../constants/store'; // adjust path if needed
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <Provider store={store}>
         <Stack initialRouteName="login">
           <Stack.Screen name="(drawer)" options={{ title: 'My Drawer', headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -21,7 +16,6 @@ export default function RootLayout() {
           <Stack.Screen name="test1" options={{ title: 'Test 1', headerShown: true }} />
           <Stack.Screen name="component-showcase" options={{ title: 'Component Showcase', headerShown: true }} />
         </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </Provider>
   );
 }

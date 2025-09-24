@@ -1,14 +1,27 @@
-import * as React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { userData } from '@/entities/data';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import * as React from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
 
 const Login = () => {
   const router = useRouter();
-
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const handleLogin = async () => {
+    const user = userData.find(u => u.email === email && u.password === password);
+    if (user) {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      router.push({ pathname: "/(drawer)/playlist", params: { userId: user.id } });
+    } else {
+      alert('Invalid email or password');
+    }
+  }
   return (
     <LinearGradient
-      colors={['#232526', '#111010']}
+      colors={['#1f2122ff', '#111010']}
       start={[0.5, 0]}
       end={[0.5, 1]}
       style={styles.container}
@@ -20,18 +33,22 @@ const Login = () => {
           placeholder="Username"
           placeholderTextColor="#888"
           style={[styles.input, { marginTop: 30 }]}
+          onChangeText={setEmail}
+          value={email}
         />
         <TextInput
           placeholder="Password"
           placeholderTextColor="#888"
           secureTextEntry
           style={styles.input}
+          onChangeText={setPassword}
+          value={password}
         />
         <Text style={styles.forgot}>Forgot password?</Text>
         <TouchableOpacity
           style={styles.loginButton}
           activeOpacity={0.8}
-          onPress={() => router.push('/(drawer)/playlist')}
+          onPress={handleLogin}
         >
           <Text style={styles.loginButtonText}>Sign In</Text>
         </TouchableOpacity>
@@ -43,7 +60,7 @@ const Login = () => {
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={{ color: '#888' }}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/sign-up')}>
+        <TouchableOpacity onPress={() => router.push('../signup')}>
           <Text style={{ color: '#1DB954' }}> Sign Up</Text>
         </TouchableOpacity>
       </View>
