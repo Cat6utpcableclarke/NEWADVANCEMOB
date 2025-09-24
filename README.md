@@ -9,10 +9,10 @@ The feature uses a central theme state to dynamically update UI colors throughou
 User preferences can be persisted locally so that the selected theme is remembered across sessions.
 <img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/3fb1bde2-43d9-4aa6-9f66-47d937dbc26d" />
 
-<img width="918" height="2046" alt="image" src="https://github.com/user-attachments/assets/5e170612-3f05-4d26-b4de-1c9abdcc9cbc" />
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/5e170612-3f05-4d26-b4de-1c9abdcc9cbc" />
 
 
-<img width="918" height="2046" alt="image" src="https://github.com/user-attachments/assets/cf6a93e6-274c-423d-8be4-b2a972137981" />
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/cf6a93e6-274c-423d-8be4-b2a972137981" />
 
 ---
 
