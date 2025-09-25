@@ -60,7 +60,7 @@ const Login = () => {
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={{ color: '#888' }}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('../signup')}>
+        <TouchableOpacity onPress={() => router.push('/sign-up')}>
           <Text style={{ color: '#1DB954' }}> Sign Up</Text>
         </TouchableOpacity>
       </View>

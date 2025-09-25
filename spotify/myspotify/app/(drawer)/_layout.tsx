@@ -34,6 +34,12 @@ export default function DrawerLayout() {
         name="theme-switcher"
         options={{headerShown: false }}
       />
-    </Drawer>
+      <Drawer.Screen
+        name="camera"
+        options={{headerShown: false }}
+      />
+      </Drawer>
+
+      
   );
 }

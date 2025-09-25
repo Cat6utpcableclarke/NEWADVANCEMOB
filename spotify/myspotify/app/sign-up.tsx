@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-const SignUp= () => {
+const SignUp = () => {
   const router = useRouter();
   return (
     <LinearGradient
@@ -58,6 +58,8 @@ const SignUp= () => {
     </LinearGradient>
   );
 };
+
+export default SignUp;
 
 const styles = StyleSheet.create({
   socialRow: {
@@ -135,5 +137,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-export default SignUp;
