@@ -1,16 +1,16 @@
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { Directory, File, Paths } from 'expo-file-system';
+import { Directory, File, Paths } from "expo-file-system";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as MediaLibrary from 'expo-media-library';
 import { useRef, useState } from "react";
 import {
-    Button,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-
 
 const Camera: React.FC = () => {
   const [facingMode, setFacingMode] = useState<CameraType>("back");
@@ -18,6 +18,23 @@ const Camera: React.FC = () => {
   const cameraRef = useRef<CameraView>(null);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [filter, setFilter] = useState<"none" | "grayscale" | "sepia">("none");
+
+  async function saveToGallery(uri: string) {
+  const { status } = await MediaLibrary.requestPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission needed to save photos');
+    return;
+  }
+
+  try {
+    const asset = await MediaLibrary.createAssetAsync(uri);
+    // optionally make an album
+    await MediaLibrary.createAlbumAsync('MyAppPhotos', asset, false);
+    alert('Saved to gallery!');
+  } catch (error) {
+    console.error('Error saving to gallery', error);
+  }
+}
 
   if (!permission) {
     return <View />;
@@ -30,28 +47,47 @@ const Camera: React.FC = () => {
       </View>
     );
   }
+
+    async function saveToGalleryAsync(uri: string) {
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission to access media library needed!");
+      return;
+    }
+
+    try {
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      // Optionally put it in an album
+      await MediaLibrary.createAlbumAsync("MyAppPhotos", asset, false);
+      console.log("Saved to gallery:", asset.uri);
+    } catch (error) {
+      console.error("Error saving to gallery:", error);
+    }
+  }
+
   function toggleCameraFacing() {
     setFacingMode((current) => (current === "back" ? "front" : "back"));
   }
-    async function savePhotoLocally(uri: string) {
+  async function savePhotoLocally(uri: string) {
     // Create a File for the *source* too
-    const sourceFile = new File(uri);                // <-- File, not string
+    const sourceFile = new File(uri); // <-- File, not string
     const targetDir = new Directory(Paths.document);
-    const destFile = new File(targetDir, 'edited-photo.png');
+    const destFile = new File(targetDir, "edited-photo.png");
     await destFile.create({ overwrite: true });
-    await sourceFile.copy(destFile);                 // File → File
-    console.log('Saved at:', destFile.uri);
-    }
+    await sourceFile.copy(destFile); // File → File
+    console.log("Saved at:", destFile.uri);
+  }
   async function handleCrop() {
     if (photoUri) {
       const result = await ImageManipulator.manipulateAsync(
         photoUri,
-        [{ crop: { originX: 0, originY: 0, width: 100, height: 100 } }],
+        [{ crop: { originX: 0, originY: 0, width: 200, height: 200 } }],
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setPhotoUri(result.uri);
     }
   }
+
   async function handleRotate() {
     if (photoUri) {
       const result = await ImageManipulator.manipulateAsync(
@@ -66,8 +102,8 @@ const Camera: React.FC = () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       setPhotoUri(photo.uri);
-      await savePhotoLocally(photo.uri);
       console.log(photo);
+      await saveToGallery(photo.uri);
     }
   }
   return (

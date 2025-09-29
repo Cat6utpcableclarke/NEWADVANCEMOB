@@ -8,7 +8,8 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
     <Provider store={store}>
-        <Stack initialRouteName="login">
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(drawer)" options={{ title: 'My Drawer', headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="sign-up" options={{ headerShown: false }} />

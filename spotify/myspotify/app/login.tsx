@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
-const Login = () => {
+const Login: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
