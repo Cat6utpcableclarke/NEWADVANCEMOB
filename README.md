@@ -2,6 +2,20 @@
 
 **NEWADVANCEMOB** is a modern mobile app project designed to mimic Spotify's UI/UX experience. This repo contains various screens and components developed using advanced mobile development techniques.
 
+
+## WEEK 6 REACT NATIVE APP FOR IOS
+> Implemented the app on IOS platform, button colors changed depending on what platform is the app currently running
+
+This is the camera screen of the app running on iOS, where the button colors appear blue. When the app runs on Android, the button colors change to green.
+
+screen on IOS
+<img width="240" height="534" alt="Screenshot 2025-09-30 at 2 31 08 PM" src="https://github.com/user-attachments/assets/1c43b5b7-859c-4663-a6f0-81f79d64dc05" />
+
+screen on Android
+
+
+
+
 ---
 ## Week 5 Theme switch(partial)
 > Implemented a theme switching feature that allows users to toggle between light and dark modes.
