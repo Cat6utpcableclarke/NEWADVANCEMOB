@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { RootState as R } from '../../constants/store';
+import { getTheme } from '../../constants/theme';
+import { useSelector } from 'react-redux';
 
 const settings = [
   {
@@ -43,26 +46,47 @@ const Settings = () => {
     setSwitchStates((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
+  // Get theme from Redux
+  const mode = useSelector((state: R) => state.theme.mode);
+  const accentColor = useSelector((state: R) => state.theme.accentColor);
+
+  // Get colors from your theme helper
+  const { colors } = getTheme(mode as any, accentColor);
+
+  // Dynamic styles
+  const containerStyle = { backgroundColor: colors.background, flex: 1 };
+  const headerStyle = { color: colors.text, fontSize: 32, fontWeight: 'bold', margin: 20 };
+  const sectionTitleStyle = { color: colors.primary, fontSize: 16, fontWeight: 'bold', marginBottom: 10, marginTop: 10 };
+  const rowStyle = {
+    backgroundColor: colors.card,
+    borderRadius: 8,
+    marginBottom: 10,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  };
+  const labelStyle = { color: colors.text, fontSize: 16, flex: 1 };
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    <ScrollView style={[styles.container, containerStyle]}>
+      <Text style={headerStyle}>Settings</Text>
       {settings.map((section) => (
         <View key={section.section} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.section}</Text>
+          <Text style={sectionTitleStyle}>{section.section}</Text>
           {section.data.map((item) => (
-            <View key={item.label} style={styles.row}>
-              <Ionicons name={item.icon as any} size={22} color="#1DB954" style={styles.icon} />
-              <Text style={styles.label}>{item.label}</Text>
+            <View key={item.label} style={rowStyle}>
+              <Ionicons name={item.icon as any} size={22} color={colors.accent} style={styles.icon} />
+              <Text style={labelStyle}>{item.label}</Text>
               {item.type === 'switch' ? (
                 <Switch
                   value={switchStates[item.label as SwitchLabel]}
                   onValueChange={() => handleToggle(item.label as SwitchLabel)}
-                  thumbColor={switchStates[item.label as SwitchLabel] ? '#1DB954' : '#888'}
-                  trackColor={{ true: '#1DB95455', false: '#444' }}
+                  thumbColor={switchStates[item.label as SwitchLabel] ? colors.accent : '#888'}
+                  trackColor={{ true: colors.accent + '55', false: '#444' }}
                 />
               ) : (
                 <TouchableOpacity onPress={item.onPress} style={styles.action}>
-                  <Ionicons name="chevron-forward" size={20} color="#888" />
+                  <Ionicons name="chevron-forward" size={20} color={colors.desc} />
                 </TouchableOpacity>
               )}
             </View>
@@ -76,40 +100,13 @@ const Settings = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
-  },
-  header: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
-    margin: 20,
   },
   section: {
     marginBottom: 28,
     paddingHorizontal: 16,
   },
-  sectionTitle: {
-    color: '#1DB954',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#181818',
-    borderRadius: 8,
-    marginBottom: 10,
-    padding: 14,
-  },
   icon: {
     marginRight: 16,
-  },
-  label: {
-    color: '#fff',
-    fontSize: 16,
-    flex: 1,
   },
   action: {
     marginLeft: 8,

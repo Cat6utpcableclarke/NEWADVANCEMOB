@@ -2,6 +2,51 @@
 
 **NEWADVANCEMOB** is a modern mobile app project designed to mimic Spotify's UI/UX experience. This repo contains various screens and components developed using advanced mobile development techniques.
 
+
+Got it ✅ You want your **README content itself** to look cleaner and more structured.
+Here’s an improved version of your Week 6 entry with better formatting, spacing, and flow:
+
+---
+
+# 📱 Week 6 – React Native App (iOS & Android)
+
+This week, I implemented the app on the **iOS platform** and added **platform-specific button colors**:
+
+* On **iOS**, buttons appear **blue**
+* On **Android**, buttons appear **green**
+
+This helps the app feel more native to each operating system.
+
+---
+
+## 📷 Camera Screen
+
+### iOS (Blue Buttons)
+
+<img width="240" height="534" alt="Screenshot 2025-09-30 at 2 31 08 PM" src="https://github.com/user-attachments/assets/1c43b5b7-859c-4663-a6f0-81f79d64dc05" />
+
+### Android (Green Buttons)
+
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/823b63c0-3611-4cdf-ac35-225952d0b6b3" />
+
+---
+
+## 🔧 Key Updates
+
+* Implemented the app on **iOS**.
+* Button colors dynamically change depending on the platform.
+* Improved **camera screen layout** for clarity and usability.
+
+---
+
+Do you want me to also **add a short code snippet** in the README (to show how you used `Platform.OS` for button colors), or keep it strictly visual and descriptive?
+
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/823b63c0-3611-4cdf-ac35-225952d0b6b3" />
+
+
+
+
+
 ---
 ## Week 5 Theme switch(partial)
 > Implemented a theme switching feature that allows users to toggle between light and dark modes.

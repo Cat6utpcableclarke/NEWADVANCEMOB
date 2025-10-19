@@ -3,7 +3,9 @@ import { Directory, File, Paths } from "expo-file-system";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as MediaLibrary from 'expo-media-library';
 import { useRef, useState } from "react";
+
 import {
+  Platform,
   Button,
   Image,
   StyleSheet,
@@ -11,14 +13,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+const isIOS = Platform.OS === 'ios';
 const Camera: React.FC = () => {
   const [facingMode, setFacingMode] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [filter, setFilter] = useState<"none" | "grayscale" | "sepia">("none");
-
+    
+  
   async function saveToGallery(uri: string) {
   const { status } = await MediaLibrary.requestPermissionsAsync();
   if (status !== 'granted') {
@@ -184,15 +187,15 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#1DB954",
+    backgroundColor: isIOS ? "#007AFF" : "#1DB954",
     borderRadius: 8,
     paddingVertical: 14,
     marginHorizontal: 8,
-    elevation: 3, // Android shadow
-    shadowColor: "#000", // iOS shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    elevation: isIOS ? 0 : 3,
+    shadowColor: isIOS ? "#000" : undefined,
+    shadowOffset: isIOS ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: isIOS ? 0.3 : undefined,
+    shadowRadius: isIOS ? 4 : undefined,
   },
   text: {
     fontSize: 20,

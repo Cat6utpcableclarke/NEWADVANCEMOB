@@ -3,13 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 
 const Login: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+
   const handleLogin = async () => {
     const user = userData.find(u => u.email === email && u.password === password);
     if (user) {
