@@ -7,6 +7,13 @@ Got it ✅ You want your **README content itself** to look cleaner and more stru
 Here’s an improved version of your Week 6 entry with better formatting, spacing, and flow:
 
 ---
+# week 7 - React Native Maps and Geolocation
+Integrated maps using react native maps and react-native-geolocation for geofencing and geolocation.
+Used marker to determing the points and the user's location.
+Challenges faced: integrataing google maps to the app.
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/e5b9820f-960d-413d-bc1d-18f8db6991d8" />
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/ab70fe4e-3d75-4e26-97d7-d28392893b7a" />
+
 
 # 📱 Week 6 – React Native App (iOS & Android)
 
