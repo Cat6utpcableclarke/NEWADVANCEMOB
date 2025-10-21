@@ -7,6 +7,14 @@ Got it ✅ You want your **README content itself** to look cleaner and more stru
 Here’s an improved version of your Week 6 entry with better formatting, spacing, and flow:
 
 ---
+#Week 7: API Integration with PokeAPI
+* integrated pokeAPI using axios.
+* Followed pokeAPI documenation to handle enpoints and pagination options
+* Implememented caching for offline access and a puller refresh to update pokemon list
+
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/dbcc4e4c-3e4e-4d24-aa1a-b8df248dfc55" />
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/c486bdd4-5728-4e02-921e-e1fdb82f10f5" />
+
 # week 7 - React Native Maps and Geolocation
 Integrated maps using react native maps and react-native-geolocation for geofencing and geolocation.
 Used marker to determing the points and the user's location.
