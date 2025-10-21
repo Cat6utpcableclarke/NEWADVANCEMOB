@@ -12,7 +12,7 @@ Here’s an improved version of your Week 6 entry with better formatting, spacin
 * Followed pokeAPI documenation to handle enpoints and pagination options
 * Implememented caching for offline access and a puller refresh to update pokemon list
 
-<imgwidth="240" height="534" alt="image" src="https://github.com/user-attachments/assets/52b24957-7e74-4208-9745-d27285cec0fa" />
+<img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/52b24957-7e74-4208-9745-d27285cec0fa" />
 
 
 <img width="240" height="534" alt="image" src="https://github.com/user-attachments/assets/c486bdd4-5728-4e02-921e-e1fdb82f10f5" />
