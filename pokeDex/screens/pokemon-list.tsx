@@ -89,6 +89,9 @@ export default function PokemonListScreen() {
               onPress={() => fetchPokemonList(previousUrl)}
               disabled={!previousUrl}
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Go to previous Pokémon page"
+              accessibilityState={{ disabled: !previousUrl }}
             >
               <Text style={styles.buttonText}>Previous</Text>
             </TouchableOpacity>
@@ -97,6 +100,9 @@ export default function PokemonListScreen() {
               onPress={() => fetchPokemonList(nextUrl)}
               disabled={!nextUrl}
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Go to next Pokémon page"
+              accessibilityState={{ disabled: !nextUrl }}
             >
               <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>

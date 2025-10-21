@@ -13,7 +13,13 @@ export default function PokemonDataCard({ name, url, onPress }: PokemonCardProps
     const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
 
     return (
-        <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+        <TouchableOpacity
+            style={styles.card}
+            onPress={onPress}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={`View details for ${name}`}
+        >
             <View style={styles.imageContainer}>
                 <Image 
                     source={{ uri: imageUrl }} 
